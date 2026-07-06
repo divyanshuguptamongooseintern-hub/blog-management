@@ -1,0 +1,207 @@
+{
+  "client": "Thunder Client",
+  "collectionName": "Blog Management System",
+  "dateExported": "2026-07-04T12:00:00.000Z",
+  "version": "1.1",
+  "folders": [],
+  "requests": [
+    {
+      "name": "1. Send OTP (Author)",
+      "url": "http://localhost:9001/auth/send-code",
+      "method": "POST",
+      "sortNum": 10000,
+      "headers": [],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"email\": \"alice@test.com\",\n  \"type\": \"register\"\n}"
+      }
+    },
+    {
+      "name": "2. Register Author (Alice)",
+      "url": "http://localhost:9001/auth/register",
+      "method": "POST",
+      "sortNum": 20000,
+      "headers": [],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"firstname\": \"Alice\",\n  \"lastname\": \"Author\",\n  \"email\": \"alice@test.com\",\n  \"password\": \"Password123!\",\n  \"country\": \"India\",\n  \"emailVerificationCode\": \"000000\",\n  \"role\": \"Author\"\n}"
+      }
+    },
+    {
+      "name": "3. Send OTP (Reader)",
+      "url": "http://localhost:9001/auth/send-code",
+      "method": "POST",
+      "sortNum": 30000,
+      "headers": [],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"email\": \"bob@test.com\",\n  \"type\": \"register\"\n}"
+      }
+    },
+    {
+      "name": "4. Register Reader (Bob)",
+      "url": "http://localhost:9001/auth/register",
+      "method": "POST",
+      "sortNum": 40000,
+      "headers": [],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"firstname\": \"Bob\",\n  \"lastname\": \"Reader\",\n  \"email\": \"bob@test.com\",\n  \"password\": \"Password123!\",\n  \"country\": \"India\",\n  \"emailVerificationCode\": \"000000\",\n  \"role\": \"Reader\"\n}"
+      }
+    },
+    {
+      "name": "5. Create Blog as Bob (Should Fail 403)",
+      "url": "http://localhost:9001/blogs",
+      "method": "POST",
+      "sortNum": 50000,
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{BOB_TOKEN}}"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"title\": \"Bob's Attempts\",\n  \"content\": \"Readers shouldn't be allowed to post blogs.\"\n}"
+      }
+    },
+    {
+      "name": "6. Create Blog as Alice (Should Succeed)",
+      "url": "http://localhost:9001/blogs",
+      "method": "POST",
+      "sortNum": 60000,
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ALICE_TOKEN}}"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"title\": \"Alice's First Post\",\n  \"content\": \"This is Alice's masterpiece blog post.\"\n}"
+      }
+    },
+    {
+      "name": "7. Try to Edit Alice's Blog as Bob (Should Fail 403)",
+      "url": "http://localhost:9001/blogs/1",
+      "method": "PATCH",
+      "sortNum": 70000,
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{BOB_TOKEN}}"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"title\": \"Hacked Title\"\n}"
+      }
+    },
+    {
+      "name": "8. Edit Own Blog as Alice (Should Succeed)",
+      "url": "http://localhost:9001/blogs/1",
+      "method": "PATCH",
+      "sortNum": 80000,
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ALICE_TOKEN}}"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"title\": \"Alice's Updated Title\"\n}"
+      }
+    },
+    {
+      "name": "9. Fetch All Blogs Publicly",
+      "url": "http://localhost:9001/blogs",
+      "method": "GET",
+      "sortNum": 90000,
+      "headers": []
+    },
+    {
+      "name": "10. Log In as Platform Admin",
+      "url": "http://localhost:9001/auth/login",
+      "method": "POST",
+      "sortNum": 100000,
+      "headers": [],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"Admin123!@#\"\n}"
+      }
+    },
+    {
+      "name": "11. Get Bob's User Profile (to get ID)",
+      "url": "http://localhost:9001/users/me",
+      "method": "GET",
+      "sortNum": 110000,
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{BOB_TOKEN}}"
+        }
+      ]
+    },
+    {
+      "name": "12. Promote Bob from Reader to Author (Admin Only)",
+      "url": "http://localhost:9001/users/2/role",
+      "method": "PATCH",
+      "sortNum": 120000,
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ADMIN_TOKEN}}"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"role\": \"Author\"\n}"
+      }
+    },
+    {
+      "name": "13. Create Blog as Promoted Bob (Should Now Succeed)",
+      "url": "http://localhost:9001/blogs",
+      "method": "POST",
+      "sortNum": 130000,
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{BOB_TOKEN}}"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"title\": \"Bob's First Blog\",\n  \"content\": \"Now that the Admin promoted me, I can write posts!\"\n}"
+      }
+    },
+    {
+      "name": "14. Admin Editing Alice's Post (Should Succeed)",
+      "url": "http://localhost:9001/blogs/1",
+      "method": "PATCH",
+      "sortNum": 140000,
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ADMIN_TOKEN}}"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"title\": \"Admin Moderated Title\"\n}"
+      }
+    },
+    {
+      "name": "15. Admin Deleting Blog Post (Should Succeed)",
+      "url": "http://localhost:9001/blogs/1",
+      "method": "DELETE",
+      "sortNum": 150000,
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ADMIN_TOKEN}}"
+        }
+      ]
+    }
+  ]
+}
